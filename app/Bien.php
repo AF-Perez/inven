@@ -34,4 +34,14 @@ class Bien extends Model
           ->withTimestamps();
     }
 
+    public function padre()
+    {
+        return $this->belongsTo('Bien', 'id_padre');
+    }
+
+    public function hijo()
+    {
+        return $this->hasMany('Bien', 'id');
+    }
+
 }

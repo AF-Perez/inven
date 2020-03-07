@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Repositories\UserRepository;
 use App\Http\Requests\StoreUser;
 use App\Http\Requests\UpdateUser;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -117,5 +118,37 @@ class UserController extends Controller
 
         return redirect()->route('users.index')
                         ->with('success','Registro eliminado con exito.');
+    }
+
+    public function ingresar()
+    {
+        return view('users.create-regular-user');
+    }
+
+    public function guardar(Request $request)
+    {
+        // se almacena el usuario
+        // $user = $userRepository->create($request);
+
+        $user = new \App\User();
+        $user->email = $request->input('email');
+        $user->nombres = $request->input('nombres');
+        $user->apellidos = $request->input('apellidos');
+        $user->cedula = $request->input('cedula');
+        $user->password = Hash::make(str_random(8));
+
+        $user->save();
+
+        // se le asigna un rol al usuario
+        // $user->assignRole($request->input('roles'));
+
+        // token del usuario
+        // $token = app(\Illuminate\Auth\Passwords\PasswordBroker::class)->createToken($user);
+
+        // se le envia un email al usuario con un enlace para que establezca su clave
+        // $user->sendPasswordResetNotification($token);
+
+        return redirect()->route('users.index')
+            ->with('success','El usuario ha sido creado con exito y se le enviara un email con las instrucciones de activacion.');
     }
 }

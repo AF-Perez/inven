@@ -26,6 +26,7 @@ class CrearTablaBienes extends Migration
             $table->decimal('valor', 8, 2)->nullable();
             $table->string('codigo_barras')->unique()->nullable();
             $table->string('codigo_qr')->unique()->nullable();
+            $table->integer('id_padre')->nullable()->default(null);
             $table->timestamps();
         });
     }

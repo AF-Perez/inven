@@ -20,6 +20,7 @@ class AddFieldsToUsersTable extends Migration
             $table->string('cargo')->default('GUARDALMACEN');
             $table->string('area')->default('ADMINISTRATIVO');
             $table->integer('id_institucion')->nullable();
+            $table->boolean('ha_establecido_contrasenia')->default(false);
         });
     }
 

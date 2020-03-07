@@ -25,6 +25,8 @@ Route::group(['middleware' => ['auth']], function() {
 
     // rutas usuarios
     Route::resource('users','UserController');
+    Route::get('regular-users/ingresar','UserController@ingresar')->name('regular-users.create');
+    Route::post('regular-users/ingresar','UserController@guardar')->name('regular-users.store');
 
     // Rutas bienes
     Route::get('/bienes', 'ControladorBienes@indice');

@@ -10,7 +10,7 @@ use Faker\Factory as Faker;
 
 class MuebleTest extends TestCase
 {
-    use RefreshDatabase;
+    // use RefreshDatabase;
 
     /**
      * A basic test example.
@@ -19,10 +19,10 @@ class MuebleTest extends TestCase
      */
     public function test__almacenar()
     {
-        // definicion de inputs y outputs esperados
-        // objeto que permite crear datos falsos
-        $faker = Faker::create();
+        // usuario de prueba
+        $user = factory(\App\User::class)->create();
 
+        $faker = Faker::create();
         // array con todos los atributos que pueden ser pasados atraves del
         // formulario de creación de un mueble
         $datos_post = array(
@@ -30,7 +30,7 @@ class MuebleTest extends TestCase
             'id_ubicacion' => 1,
             'nombre' => $faker->name,
             'clase' => 'CONTROL ADMINISTRATIVO',
-            'codigo' => $faker->ean13,
+            'codigo' => $faker->unique()->bankAccountNumber,
             'fecha_de_adquisicion' => $faker->date($format = 'Y-m-d', $max = 'now'),
             'acta_de_recepcion' => "dummy_binary",
             'id_responsable' => 1,
@@ -53,8 +53,9 @@ class MuebleTest extends TestCase
 
         // ejecucion del componente en evaluacion
         // ingresando el formulario
-        $response = $this->call('POST', 'muebles', $datos_post);
-        
+        $respuesta = $this->actingAs($user)
+                           ->post('/muebles', $datos_post);
+        // $respuesta->dump();
         // Evaluacion de resultados
         // asegurando que exista un nuevo registro con datos esperados en la
         // tabla bienes
@@ -79,6 +80,8 @@ class MuebleTest extends TestCase
     {
         // setup
         $bien = factory('App\Bien')->create();
+        // usuario de prueba
+        $user = factory(\App\User::class)->create();
 
         // creacion de un bien de control administrativo
         $bien->bca = factory('App\BienControlAdministrativo')->create(
@@ -98,7 +101,7 @@ class MuebleTest extends TestCase
             'id_ubicacion' => 1,
             'nombre' => $faker->name,
             'clase' => 'CONTROL ADMINISTRATIVO',
-            'codigo' => $faker->ean13,
+            'codigo' => $faker->unique()->bankAccountNumber,
             'fecha_de_adquisicion' => $faker->date($format = 'Y-m-d', $max = 'now'),
             'acta_de_recepcion' => "dummy_binary",
             'id_responsable' => 1,
@@ -120,7 +123,8 @@ class MuebleTest extends TestCase
         );
 
         // ejecucion del componente en evaluacion
-        $response = $this->call('PUT', 'muebles/' . $id_mueble, $datos_post);
+        $response = $this->actingAs($user)
+                    ->call('PUT', 'muebles/' . $id_mueble, $datos_post);
 
         // Evaluacion de resultados
         // asegurando que que se hayan actualizado datos en la
@@ -144,14 +148,18 @@ class MuebleTest extends TestCase
 
     public function test__destruir()
     {
-        // setup
+        // $this->withoutExceptionHandling();
+
+        // INICIALIZACION DE DATOS
         $bien = factory('App\Bien')->create();
+        // usuario de prueba
+        $user = factory(\App\User::class)->create();
 
         // creacion de un bien de control administrativo
         $bien->bca = factory('App\BienControlAdministrativo')->create(
             ['id_bien' => $bien->id]
         );
-        // creacion de un bien de control administrativo
+        // creacion de un mueble
         $bien->bca->mueble = factory('App\Mueble')->create(
             ['id_bien_control_administrativo' => $bien->bca->id]
         );
@@ -162,7 +170,8 @@ class MuebleTest extends TestCase
         $id_bien = $bien->id;
 
         // ejecucion del componente en evaluacion
-        $response = $this->call('DELETE', 'muebles/'.$id_mueble);
+        $response = $this->actingAs($user)
+                        ->call('DELETE', 'muebles/'.$id_mueble);
         //dd($response->status());
 
         // evaluacion de resultados, luego de la eliminacion no deben existir

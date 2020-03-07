@@ -9,39 +9,22 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AuthAPITest extends TestCase
 {
-    use RefreshDatabase;
-
-    // public function setUp()
-    // {
-    //     parent::setUp();
-    //     Artisan::call('migrate');
-    //     Artisan::call('db:seed');
-    // }
-
     /** @test */
-    public function usuario_se_puede_registrar_atraves_de_la_api()
+    public function usuario_se_puede_loguear_atraves_de_la_api()
     {
         $this->withoutExceptionHandling();
+
+        $user = factory(\App\User::class)->create();
+
         // preparar data
-        $data2 = [
-            'form-params' => [
-                'name' => 'admin@admin.com',
-                'email' => 'admin@admin.com',
-                'password' => 'password',
-                'c_password' => 'password',
-            ],
-        ];
         $data = [
-            'name' => 'admin@admin.com',
-            'email' => 'admin@admin.com',
-            'password' => 'password',
-            'c_password' => 'password',
+            'email' => $user->email,
+            'password' => 'Password123',
         ];
 
         // intentar la petición
-        $respuesta = $this->json('POST', '/api/register', $data);
+        $respuesta = $this->json('POST', '/api/login', $data);
 
-        $respuesta->dump();
         // valorar el resultado
         $respuesta->assertStatus(201);
     }

@@ -10,7 +10,7 @@ use Faker\Factory as Faker;
 
 class UbicacionesTest extends TestCase
 {
-    use RefreshDatabase;
+    // use RefreshDatabase;
 
     /**
      * A basic test example.
@@ -19,8 +19,12 @@ class UbicacionesTest extends TestCase
      */
     public function test__almacenar()
     {
-        // definicion de inputs y outputs esperados
-        // objeto que permite crear datos falsos
+         // $this->withoutExceptionHandling();
+
+        // INICIALIZACION DE DATOS
+        // usuario de prueba
+        $user = factory(\App\User::class)->create();
+      
         $faker = Faker::create();
 
         // array con todos los atributos que pueden ser pasados atraves del
@@ -34,7 +38,8 @@ class UbicacionesTest extends TestCase
 
         // ejecucion del componente en evaluacion
         // ingresando el formulario
-        $response = $this->call('POST', 'ubicaciones', $datos_post);
+        $response = $this->actingAs($user)
+                    ->call('POST', 'ubicaciones', $datos_post);
 
         // Evaluacion de resultados
         // asegurando que exista un nuevo registro con datos esperados en la
@@ -46,6 +51,8 @@ class UbicacionesTest extends TestCase
 
     public function test__actualizar()
     {
+        // usuario de prueba
+        $user = factory(\App\User::class)->create();
         // Crea un registro de prueba
         $ubicacion = factory('App\Ubicacion')->create();
         // Obtiene el id del registro a modificar
@@ -63,7 +70,8 @@ class UbicacionesTest extends TestCase
         );
 
         // ejecucion del componente en evaluacion
-        $response = $this->call('PUT', 'ubicaciones/' . $id, $datos_req);
+        $response = $this->actingAs($user)
+                        ->call('PUT', 'ubicaciones/' . $id, $datos_req);
 
         // Evaluacion de resultados
         // asegurando que que se hayan actualizado datos en la
@@ -75,7 +83,10 @@ class UbicacionesTest extends TestCase
 
     public function test__destruir()
     {
-      // Crea un registro de prueba
+        // usuario de prueba
+        $user = factory(\App\User::class)->create();
+
+        // Crea un registro de prueba
         $ubicacion = factory('App\Ubicacion')->create();
 
         // ids de registros a eliminar
@@ -88,7 +99,8 @@ class UbicacionesTest extends TestCase
 
         // ejecucion del componente en evaluacion
         //$resp = $this->call('DELETE', 'ubicaciones/'.$id, $datos_req);
-        $resp = $this->delete('ubicaciones/' . $id);
+        $resp = $this->actingAs($user)
+                    ->delete('ubicaciones/' . $id);
           
         // evaluacion de resultados, luego de la eliminacion no deben existir
         // ningun registro con los ids recien creados, en las tablas correspondientes

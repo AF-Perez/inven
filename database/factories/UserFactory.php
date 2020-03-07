@@ -17,12 +17,12 @@ use Illuminate\Support\Str;
 $factory->define(App\User::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
-        'email' => 'admin@admin.foo',
+        'email' => $faker->email,
         'email_verified_at' => now(),
-        'password' => 'password', // password
+        'password' => bcrypt('Password123'), // password
         'remember_token' => Str::random(10),
         'nombres' => $faker->firstName,
         'apellidos' => $faker->lastName,
-        'cedula' => '1723749501',
+        'cedula' => $faker->dni,
     ];
 });

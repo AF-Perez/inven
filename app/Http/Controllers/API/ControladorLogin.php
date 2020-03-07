@@ -51,7 +51,7 @@ class ControladorLogin extends BaseController
             'token_type' => 'Bearer',
             'expires_at' => Carbon::parse($tokenResult->token->expires_at)
                 ->toDateTimeString()
-        ]);
+        ], 201);
     }
 
     public function logout(Request $request)

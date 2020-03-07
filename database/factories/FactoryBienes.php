@@ -19,7 +19,7 @@ $factory->define(App\Bien::class, function (Faker $faker) {
 $factory->define(App\BienControlAdministrativo::class, function (Faker $faker) {
     return [
         'id_bien' => $faker->randomDigit,
-        'codigo' => $faker->word,
+        'codigo' => $faker->unique()->bankAccountNumber,
         'peligrosidad' => $faker->word,
         'periodo_de_garantia' => $faker->randomDigit,
         'estado' => $faker->word,

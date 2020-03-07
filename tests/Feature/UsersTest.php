@@ -9,15 +9,14 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class UsersTest extends TestCase
 {
     use WithFaker;
-
     /** @test */
     public function un_admin_puede_registrar_usuarios()
     {
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
         // setup de datos
 
         // login
-
+        // TODO otorgarle rol de administador
         $admin = factory(\App\User::class)->create();
 
         // $user->assignRole('Super Admin');
@@ -26,15 +25,13 @@ class UsersTest extends TestCase
 
         $atributos = [
             'email' => $this->faker->email,
-            'password' => 'password',
-            'password_confirmation' => 'password',
             'nombres' => 'Daniela',
             'apellidos' => 'Ortega',
-            'cedula' => '1723749502',
+            'cedula' => $this->faker->randomNumber(9, true)
         ];
 
         // intenta crear usuario
-        $this->post('/users', $atributos);
+        $response = $this->post('/regular-users/ingresar', $atributos);
 
         // como resultado el nuevo usario se encuentra en la base de datos
         $this->assertDatabaseHas('users', [

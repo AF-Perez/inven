@@ -7,9 +7,9 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;;
 
-class PruebasBienesAPI extends TestCase
+class BienesTestAPI extends TestCase
 {
-    use RefreshDatabase;
+    // use RefreshDatabase;
 
     // public function setUp()
     // {
@@ -20,8 +20,8 @@ class PruebasBienesAPI extends TestCase
     // /**
     //  * @test
     //  */
-    use RefreshDatabase;
-
+    
+    /** @test */  
     public function por_medio_de_la_api_se_obtienen_todos_los_bienes()
     {
         $this->withoutExceptionHandling();

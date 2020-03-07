@@ -44,6 +44,7 @@ class ControladorBienes extends Controller
         $bien->observaciones = $request->input('observaciones');
         $bien->valor = $request->input('valor_unitario');
         $bien->codigo_barras = $request->input('codigo');
+        $bien->id_padre = $request->input('id_padre');
 
         $bca = new \App\BienControlAdministrativo();
         $bca->codigo = $request->input('codigo');

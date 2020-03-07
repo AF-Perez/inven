@@ -27,7 +27,7 @@
 
       <!-- Right side -->
       <div class="level-right">
-        <p class="level-item"><a href="{{ route('users.create') }}" class="button is-success">Registrar usuario</a></p>
+        <p class="level-item"><a href="{{ route('regular-users.create') }}" class="button is-success">Registrar usuario</a></p>
       </div>
     </nav>
 
@@ -43,7 +43,7 @@
       <tbody>
         @foreach ($users as $user)
         <tr>
-          <th>{{ $user->nombres }} {{ $user->apellidos }}</th>
+          <th><?php if ($user->ha_establecido_contrasenia == false) echo '(Pendiente) ' ?>{{ $user->nombres }} {{ $user->apellidos }}</th>
           <td>{{ $user->email }}</td>
           <td>{{ $user->cedula }}</td>
           <td>
