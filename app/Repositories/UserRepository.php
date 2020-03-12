@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserRepository
 {
@@ -19,6 +20,28 @@ class UserRepository
 
         // se guarda el usuario
         $user = User::create($input);
+
+        return $user;
+    }
+
+    /**
+     * Guarda un recurso en la base de datos
+     *
+     * @param \App\Http\Requests\StoreUser $request
+     * @return App\User
+     */
+    public function createRegularUser($userData)
+    {
+        // se almacena el usuario
+        // $user = $userRepository->create($request);
+        $user = new \App\User();
+        $user->email = $userData->input('email');
+        $user->nombres = $userData->input('nombres');
+        $user->apellidos = $userData->input('apellidos');
+        $user->cedula = $userData->input('cedula');
+        $user->password = Hash::make(str_random(8));
+
+        $user = $user->save();
 
         return $user;
     }

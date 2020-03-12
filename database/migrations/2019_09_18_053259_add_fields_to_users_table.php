@@ -39,6 +39,7 @@ class AddFieldsToUsersTable extends Migration
                 'cargo',
                 'area',
                 'id_institucion',
+                'ha_establecido_contrasenia',
             ]);
         });
     }

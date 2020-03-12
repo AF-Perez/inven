@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Http\Requests\StoreRegularUser;
 use App\Repositories\UserRepository;
 use App\Http\Requests\StoreUser;
 use App\Http\Requests\UpdateUser;
-use Illuminate\Support\Facades\Hash;
+use App\Mail\PasswordSetupNotification;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -125,30 +127,65 @@ class UserController extends Controller
         return view('users.create-regular-user');
     }
 
-    public function guardar(Request $request)
+    public function guardar(StoreRegularUser $request, UserRepository $userRepository)
     {
-        // se almacena el usuario
-        // $user = $userRepository->create($request);
-
-        $user = new \App\User();
-        $user->email = $request->input('email');
-        $user->nombres = $request->input('nombres');
-        $user->apellidos = $request->input('apellidos');
-        $user->cedula = $request->input('cedula');
-        $user->password = Hash::make(str_random(8));
-
-        $user->save();
+        
+        $user = $userRepository->createRegularUser($request);
 
         // se le asigna un rol al usuario
         // $user->assignRole($request->input('roles'));
 
+        $user = DB::table('users')->where('email', '=', $request->email)
+            ->first();
+
         // token del usuario
         // $token = app(\Illuminate\Auth\Passwords\PasswordBroker::class)->createToken($user);
 
-        // se le envia un email al usuario con un enlace para que establezca su clave
-        // $user->sendPasswordResetNotification($token);
+        //Create Password Reset Token
+        DB::table('password_resets')->insert([
+            'email' => $request->email,
+            'token' => str_random(60),
+            'created_at' => Carbon::now()
+        ]);
 
-        return redirect()->route('users.index')
-            ->with('success','El usuario ha sido creado con exito y se le enviara un email con las instrucciones de activacion.');
+        //Get the token just created above
+        $tokenData = DB::table('password_resets')
+            ->where('email', $request->email)->latest($column = 'created_at')->first();
+
+        if ($this->sendResetEmail($request->email, $tokenData->token)) {
+            return redirect()->route('users.index')
+                ->with('success','El usuario ha sido creado con exito y se le envió un email con las instrucciones de activacion.');
+        } else {
+            return redirect()->back()->withErrors(['error' => trans('A Network Error occurred. Please try again.')]);
+        }
+
+    }
+
+    private function sendResetEmail($email, $token)
+    {
+        //Retrieve the user from the database
+        $user = DB::table('users')->where('email', $email)->select('email', 'nombres', 'apellidos', 'cedula')->first();
+        //Generate, the password reset link. The token generated is embedded in the link
+        $link = url('password/reset/' . $token . '?email=' . urlencode($user->email));
+
+        try {
+            //Here send the link with CURL with an external email API 
+            Mail::to( $user->email )
+            ->send(new PasswordSetupNotification(
+                $user->email,
+                $user->nombres,
+                $user->apellidos,
+                $user->cedula,
+                $link,
+            ));
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public function aprobacion()
+    {
+        return view('aprobacion');
     }
 }

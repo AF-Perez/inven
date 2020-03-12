@@ -12,7 +12,7 @@ class UsersTest extends TestCase
     /** @test */
     public function un_admin_puede_registrar_usuarios()
     {
-        // $this->withoutExceptionHandling();
+        $this->withoutExceptionHandling();
         // setup de datos
 
         // login
@@ -40,9 +40,4 @@ class UsersTest extends TestCase
 
     }
 
-    protected function tearDown(): void
-    {
-        // eliminar todos los registros creados
-        \App\User::truncate();
-    }
 }
